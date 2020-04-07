@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-import sys
+import argparse
 
 """
 Usage
@@ -17,12 +17,7 @@ Output
 A rectified image of width 500px. Since we know the aspect ratio the height will be determined by that.
 Aspect ratio is that of a letter document (8.5x11)
 """
-
-DATA_PATH = "/home/david/PycharmProjects/opencv/course1/projects/document_scanner/"
-
-# Use GrabCut to binarize the image. This works if the image is light and the background is dark.
-
-# Convention of defining color in opencv is BGR
+# Convention of defining color in OpenCV is BGR
 LIGHT_GREEN = [128, 255, 128]  # rectangle color
 LIGHT_RED = [128, 128, 255]  # PR BG
 BLUE = [255, 0, 0]  # rectangle color
@@ -73,7 +68,7 @@ def onmouse(event, x, y, flags, param):
         rect_or_mask = 0
         print(" Now press the key 'n' a few times until no further change \n")
 
-    # Draw touchup curves
+    # Draw touch-up curves
     if event == cv2.EVENT_LBUTTONDOWN:
         if not rect_over:
             print("first draw rectangle \n")
@@ -99,34 +94,51 @@ if __name__ == '__main__':
     # print documentation
     print(__doc__)
 
+    # construct the argument parser and parse the arguments
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-i", "--input", required=True, help="input image name")
+    ap.add_argument("-o", "--output", required=False, help="output image name")
+    ap.add_argument("-p", "--path", required=False, help="output path")
+    args = vars(ap.parse_args())
+
+    DATA_PATH = "/home/david/PycharmProjects/opencv/course1/projects/document_scanner/"
+
     # Loading images if image is given by command line
-    if len(sys.argv) == 2:
-        filename = sys.argv[1]  # Using file for image
+    if args["input"]:
+        filename = DATA_PATH + args["input"]  # Using file for image
         print("Loading Image \n")
     else:
         print("No input image given,  so loading default image,  ../../data/images/hillary_clinton.jpg \n")
         print("Correct Usage: python grabcut.py <filename> \n")
-        filename = DATA_PATH + 'test_img.jpg'
+        filename = DATA_PATH + 'scanned_form.jpg'
 
     img = cv2.imread(filename)
+    img_text = "-----[Press 'R' to start over. Press 'esc' to exit.]-----\n" \
+               "1.) Draw a rectangle around the object.\n" \
+               "2.) Press 'N' to crop the image.\n"\
+               "3.) Press 'S' to align image and save."
+    y0, dy = 50, 20
+    for i, line in enumerate(img_text.split('\n')):
+        y = y0 + i * dy
+        cv2.putText(img, line, (50, y), cv2.QT_FONT_NORMAL, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+
     img2 = img.copy()  # a copy of original image
     mask = np.zeros(img.shape[:2], dtype=np.uint8)  # mask initialized to PR_BG
     output = np.zeros(img.shape, np.uint8)  # output image to be shown
 
     # input and output windows
-    cv2.namedWindow('output')
-    cv2.namedWindow('input')
-    cv2.setMouseCallback('input', onmouse)
-    cv2.moveWindow('input', img.shape[1] + 10, 90)
+    cv2.namedWindow('Input')
+    cv2.setMouseCallback('Input', onmouse)
+    cv2.moveWindow('Input', img.shape[1] + 10, 90)
 
     print(" Instructions: \n")
     print(" Draw a rectangle around the object using right mouse button \n")
 
     while 1:
 
-        cv2.imshow('output', output)
-        cv2.imshow('input', img)
-        k = cv2.waitKey(1)
+        cv2.imshow('Black and Gray', output)
+        cv2.imshow('Input', img)
+        k = cv2.waitKey(10) & 0XFF
 
         # key bindings
         if k == 27:  # esc to exit
@@ -149,28 +161,28 @@ if __name__ == '__main__':
 
             # Use findContour to find the contours of the binary image.
             output = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
-            contours, hierarchy = cv2.findContours(output, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
-            contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
-            biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
+            cnts, hierarchy = cv2.findContours(output, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+            cnt_sizes = [(cv2.contourArea(cnt), cnt) for cnt in cnts]
+            largest_cnt = max(cnt_sizes, key=lambda x: x[0])[1]
 
             # Use approxPolyDP to convert the contour to a rectangle. (finds the approximate polygon)
-            epsilon = 0.1 * cv2.arcLength(biggest_contour, True)
-            approx = cv2.approxPolyDP(biggest_contour, epsilon, True)
-            print(f'The approximate polygon corners are: \n {approx}')
+            epsilon = 0.1 * cv2.arcLength(largest_cnt, True)
+            corners = cv2.approxPolyDP(largest_cnt, epsilon, True)
+            print(f'The approximate polygon corners are: \n {corners}')
 
             # Create destination points for homography
             pts_dst = np.array([[500, 0], [0, 0], [0, 647], [500, 647]], dtype=float)
 
             # Calculate homography using 4-point correspondences and rectify.
             # Use 4 points from approxPolyDP and 4 points from 500px width and height (500px * aspect ratio(647px))
-            h, status = cv2.findHomography(approx, pts_dst)
+            h, status = cv2.findHomography(corners, pts_dst)
 
             # Warp source image to destination based on homography
             final_img = cv2.warpPerspective(img, h, (500, 647))
 
             # Final image window
-            cv2.namedWindow('final')
-            cv2.imshow('final', final_img)
+            cv2.namedWindow('Saved Image')
+            cv2.imshow('Saved Image', final_img)
 
             # Draw all the contours
             # nnn = cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
