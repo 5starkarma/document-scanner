@@ -17,6 +17,7 @@ Output
 A rectified image of width 500px. Since we know the aspect ratio the height will be determined by that.
 Aspect ratio is that of a letter document (8.5x11)
 """
+
 # Convention of defining color in OpenCV is BGR
 LIGHT_GREEN = [128, 255, 128]  # rectangle color
 LIGHT_RED = [128, 128, 255]  # PR BG
