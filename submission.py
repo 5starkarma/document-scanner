@@ -106,10 +106,7 @@ if __name__ == '__main__':
     # Loading images if image is given by command line
     if args["input"]:
         filename = DATA_PATH + args["input"]  # Using file for image
-        print("Loading Image \n")
     else:
-        print("No input image given,  so loading default image,  ../../data/images/hillary_clinton.jpg \n")
-        print("Correct Usage: python grabcut.py <filename> \n")
         filename = DATA_PATH + 'scanned_form.jpg'
 
     img = cv2.imread(filename)
@@ -171,14 +168,14 @@ if __name__ == '__main__':
             print(f'The approximate polygon corners are: \n {corners}')
 
             # Create destination points for homography
-            pts_dst = np.array([[500, 0], [0, 0], [0, 647], [500, 647]], dtype=float)
+            pts_dst = np.array([[1000, 0], [0, 0], [0, 1294], [1000, 1294]], dtype=float)
 
             # Calculate homography using 4-point correspondences and rectify.
             # Use 4 points from approxPolyDP and 4 points from 500px width and height (500px * aspect ratio(647px))
             h, status = cv2.findHomography(corners, pts_dst)
 
             # Warp source image to destination based on homography
-            final_img = cv2.warpPerspective(img, h, (500, 647))
+            final_img = cv2.warpPerspective(img, h, (1000, 1294))
 
             # Final image window
             cv2.namedWindow('Saved Image')
