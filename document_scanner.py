@@ -92,12 +92,9 @@ def onmouse(event, x, y, flags, param):
 
 if __name__ == '__main__':
 
-    # print documentation
-    print(__doc__)
-
     # construct the argument parser and parse the arguments
     ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--input", required=True, help="input image name")
+    ap.add_argument("-i", "--input", required=False, help="input image name")
     ap.add_argument("-o", "--output", required=False, help="output image name")
     ap.add_argument("-p", "--path", required=False, help="output path")
     args = vars(ap.parse_args())
@@ -106,9 +103,9 @@ if __name__ == '__main__':
 
     # Loading images if image is given by command line
     if args["input"]:
-        filename = DATA_PATH + args["input"]  # Using file for image
+        filename = args["input"]  # Using file for image
     else:
-        filename = DATA_PATH + 'scanned_form.jpg'
+        filename = 'scanned_form.jpg'
 
     img = cv2.imread(filename)
     img_text = "-----[Press 'R' to start over. Press 'esc' to exit.]-----\n" \
@@ -185,7 +182,7 @@ if __name__ == '__main__':
             # Draw all the contours
             # nnn = cv2.drawContours(img, [approx], -1, (0, 255, 0), 3)
 
-            cv2.imwrite(DATA_PATH + 'output_image.png', final_img)
+            cv2.imwrite('math_facts.png', final_img)
             print(" Result saved as image \n")
 
         elif k == ord('r'):  # reset everything
