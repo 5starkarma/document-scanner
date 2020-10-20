@@ -43,7 +43,6 @@ value = DRAW_FG  # drawing initialized to FG
 thickness = 3  # brush thickness
 rect_not_done = True
 
-#test
 # Application Function on mouse
 def onmouse(event, x, y, flags, param):
     global img, img2, drawing, value, mask, rectangle, rect, rect_or_mask, ix, iy, rect_over, rect_not_done
