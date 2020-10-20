@@ -1,2 +1,5 @@
-# document_scanner
-An OpenCV app for aligning a document in an image using homography.
+# Document Scanner
+
+OpenCV implementation of a document scanner using homography.
+
+---
