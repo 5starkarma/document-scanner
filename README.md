@@ -8,7 +8,7 @@ Input            |  Segmented                | Output
 
 ---
 
-OpenCV implementationof document alignment using contour detection, contour approximation,
-homography and perspective transformations
+OpenCV implementation of document alignment using contour detection, contour approximation,
+homography and perspective transformations.
 
 ---
