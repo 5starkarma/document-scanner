@@ -1,5 +1,6 @@
 # Document Scanner
 
-OpenCV implementation of a document scanner using homography.
+OpenCV implementationof document alignment using contour detection, contour approximation,
+homography and perspective transformations
 
 ---
