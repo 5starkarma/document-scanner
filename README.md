@@ -2,9 +2,9 @@
 
 # Document Scanner
 
-Input            |  Segmented                |
-:-------------------------:|:-------------------------:
-![alt text](https://github.com/5starkarma/document_scanner/blob/master/data/input/input.png?raw=true "Input image")  |   ![alt text](https://github.com/5starkarma/document_scanner/blob/master/data/output/output.png?raw=true?raw=true "Output image")
+Input            |  Segmented                | Output
+:-------------------------:|:-------------------------:|:-------------------------:
+![alt text](https://github.com/5starkarma/document_scanner/blob/master/data/input/input.png?raw=true "Input image")  |  ![alt text](https://github.com/5starkarma/document_scanner/blob/master/data/output/segmented.png?raw=true?raw=true "Segmented image") | ![alt text](https://github.com/5starkarma/document_scanner/blob/master/data/output/output.png?raw=true?raw=true "Output image")
 
 ---
 
